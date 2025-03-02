@@ -18,7 +18,7 @@ This repository serves as a **template** for structuring a game using this ECS. 
  ┃ ┣ 📂 events/        # 📢 Custom events
  ┃ ┣ 📂 core/          # 🛠️ ECS configuration and utilities
  ┃ ┃ ┣ __init__.py
- ┃ ┃ ┣ app.py          # 🎮 Main ECS setup
+ ┃ ┃ ┣ pivy.py          # 🎮 Main ECS setup
  ┃ ┃ ┗ game.py         # 🚀 Game entry point
  ┣ 📜 main.py          # 🏁 Run the game
  ┣ 📜 config.json      # ⚙️ General configuration (optional)

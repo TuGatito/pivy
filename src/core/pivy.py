@@ -219,11 +219,17 @@ def debug_system(system: System):
 class SystemPhase(Enum):
   """ 🕹️ Fases de ejecución del sistema. """
   INIT = 1             # 🚀 Inicialización.
-  PREUPDATE = 2        # ⏳ Pre-actualización.
-  UPDATE = 3           # 🔄 Actualización principal.
-  POSTUPDATE = 4       # ✅ Post-actualización.
-  DRAW = 5             # 🎨 Renderizado.
-  UNLOAD = 6           # 🗑️ Liberación de recursos.
+  RESET = 3
+  PREUPDATE = 3        # ⏳ Pre-actualización.
+  UPDATE = 4           # 🔄 Actualización principal.
+  POSTUPDATE = 5       # ✅ Post-actualización.
+  DRAW = 6             # 🎨 Renderizado.
+  KEYPRESS = 7
+  KEYRELEASE = 8
+  MOUSEMOTION = 9
+  MOUSEPRESS = 10
+  MOUSERELEASE = 11
+  UNLOAD = 12           # 🗑️ Liberación de recursos.
 
 # 🎮 Aplicación principal del ECS.
 class App:
@@ -240,21 +246,20 @@ class App:
     self._system_storage[phase].extend(systems)
     return self
 
-  # 🚀 Inicializa los sistemas de la fase INIT.
-  def init(self) -> None:
-    for system in self._system_storage[SystemPhase.INIT]:
+  # 🚀 Ejecuta los sistemas en la phase escogida.
+  def run_systems_in(self, phase: SystemPhase):
+    for system in self._system_storage[phase]:
       system(self._commands, self._query, self._event_bus)
-    self._commands.apply()
 
   # 🔄 Ejecuta la lógica de actualización.
   def update(self) -> None:
     self._event_bus.process() # 📢 Procesa eventos antes de actualizar.
+    for system in self._system_storage[SystemPhase.PREUPDATE]:
+      system(self._commands, self._query, self._event_bus)
     for system in self._system_storage[SystemPhase.UPDATE]:
+      system(self._commands, self._query, self._event_bus)
+    for system in self._system_storage[SystemPhase.POSTUPDATE]:
       system(self._commands, self._query, self._event_bus)
     self._commands.apply()
 
-  # 🎨 Llama a los sistemas de renderizado.
-  def draw(self) -> None:
-    for system in self._system_storage[SystemPhase.DRAW]:
-      system(self._commands, self._query, self._event_bus)
-    self._commands.apply()
+
